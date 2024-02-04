@@ -97,5 +97,31 @@
         '';
       };
     });
+
+    packages = forEachSupportedSystem ({
+      pkgs,
+      system,
+    }: let
+      pname = "protohackers";
+      version = "v0.1.0";
+      elixir = pkgs.beam.packagesWith pkgs.beam.interpreters.erlangR25;
+      src = builtins.path {
+        path = ./.;
+        name = "protohackers";
+      };
+    in {
+      protohackers = elixir.mixRelease {
+        inherit pname version src;
+
+        mixFodDeps = elixir.fetchMixDeps {
+          pname = "mix-deps-${pname}";
+          inherit src version;
+          hash = "sha256-pupw16g+mTtVnwG+EajltJH4guzNdQY8deCZEo739Eo=";
+          mixEnv = "";
+        };
+
+        nativeBuildInputs = [];
+      };
+    });
   };
 }
